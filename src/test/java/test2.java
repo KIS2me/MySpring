@@ -1,6 +1,7 @@
 import AOP.AdvisedSupport;
-import AOP.pointcut.AspectJExpressionPointcut;
 import AOP.TargetSource;
+import AOP.pointcut.AspectJExpressionPointcut;
+import AOP.proxy.CglibAopProxy;
 import AOP.proxy.JdkDynamicAopProxy;
 import bean.UserService;
 import bean.UserService2;
@@ -25,7 +26,28 @@ public class test2 {
     //测试Jdk动态代理实现AOP
     @Test
     public void test_Proxy() {
-        UserServiceInterface userService2 = new UserService2();
+        UserServiceInterface userService = new UserService();
+
+        //组装代理信息
+        AdvisedSupport advisedSupport = new AdvisedSupport();
+        //传入代理对象
+        advisedSupport.setTargetSource(new TargetSource(userService));
+        //设置方法拦截器(即设置要进行的增强)
+        advisedSupport.setMethodInterceptor(new UserServiceInterceptor());
+        //设置方法匹配器
+        advisedSupport.setMethodMatcher(new AspectJExpressionPointcut("execution(* bean.UserServiceInterface.*(..))"));
+        //生成代理对象
+        UserServiceInterface proxy = (UserServiceInterface) new JdkDynamicAopProxy(advisedSupport).getProxy();
+
+        System.out.println(proxy.queryUserInfo());
+        System.out.println();
+        System.out.println(proxy.register("TX"));
+    }
+
+    //测试基于Cglib的动态代理
+    @Test
+    public void test_Proxy2() {
+        UserService2 userService2 = new UserService2();
 
         //组装代理信息
         AdvisedSupport advisedSupport = new AdvisedSupport();
@@ -34,9 +56,9 @@ public class test2 {
         //设置方法拦截器(即设置要进行的增强)
         advisedSupport.setMethodInterceptor(new UserServiceInterceptor());
         //设置方法匹配器
-        advisedSupport.setMethodMatcher(new AspectJExpressionPointcut("execution(* bean.UserServiceInterface.*(..))"));
+        advisedSupport.setMethodMatcher(new AspectJExpressionPointcut("execution(* bean.UserService2.*(..))"));
         //生成代理对象
-        UserServiceInterface proxy = (UserServiceInterface) new JdkDynamicAopProxy(advisedSupport).getProxy();
+        UserService2 proxy = (UserService2) new CglibAopProxy(advisedSupport).getProxy();
 
         System.out.println(proxy.queryUserInfo());
         System.out.println();

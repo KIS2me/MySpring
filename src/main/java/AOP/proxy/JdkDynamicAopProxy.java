@@ -30,7 +30,8 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
          *    Class<?>[] interfaces - 代理类要实现的接口列表
          *    InvocationHandler h - 指派方法调用的调用处理程序
          */
-        return Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), advisedSupport.getTargetSource().getTargetInterfaces(), this);
+        return Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+                advisedSupport.getTargetSource().getTargetInterfaces(), this);
     }
 
     /**
