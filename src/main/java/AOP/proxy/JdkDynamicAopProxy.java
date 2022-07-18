@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * 获取代理类的具体实现
+ * 基于JDK的动态代理的具体实现
  */
 public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
     private final AdvisedSupport advisedSupport;
